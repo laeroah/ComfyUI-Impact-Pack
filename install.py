@@ -30,9 +30,9 @@ def handle_stream(stream, is_stdout):
     for msg in stream:
         if is_stdout:
             print(msg, end="", file=sys.stdout)
-        else: 
+        else:
             print(msg, end="", file=sys.stderr)
-            
+
 
 def process_wrap(cmd_str, cwd=None, handler=None):
     print(f"[Impact Pack] EXECUTE: {cmd_str} in '{cwd}'")
@@ -67,21 +67,21 @@ def get_installed_packages():
         except subprocess.CalledProcessError as e:
             print(f"[ComfyUI-Manager] Failed to retrieve the information of installed pip packages.")
             return set()
-    
+
     return pip_list
-    
+
 
 def is_installed(name):
     name = name.strip()
     pattern = r'([^<>!=]+)([<>!=]=?)'
     match = re.search(pattern, name)
-    
+
     if match:
         name = match.group(1)
-        
+
     result = name.lower() in get_installed_packages()
     return result
-    
+
 
 def is_requirements_installed(file_path):
     print(f"req_path: {file_path}")
@@ -91,7 +91,7 @@ def is_requirements_installed(file_path):
             for line in lines:
                 if not is_installed(line):
                     return False
-                    
+
     return True
 
 try:
@@ -113,7 +113,7 @@ try:
 
     def ensure_subpack():
         import git
-        if os.path.exists(subpack_path):
+        if not os.path.exists(subpack_path):
             try:
                 repo = git.Repo(subpack_path)
                 repo.remotes.origin.pull()
@@ -183,10 +183,10 @@ try:
     def ensure_pip_packages_last():
         my_path = os.path.dirname(__file__)
         requirements_path = os.path.join(my_path, "requirements.txt")
-        
+
         if not is_requirements_installed(requirements_path):
             process_wrap(pip_install + ['-r', requirements_path])
-            
+
         # fallback
         try:
             import segment_anything
